@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { ApolloProvider, useQuery, gql } from '@apollo/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'https://graphql-pokeapi.graphcdn.app/', 
+  cache: new InMemoryCache(),
+});
+
+const GET_POKEMONS = gql`
+  query getPokemons {
+    pokemons(limit: 10, offset: 0) {
+      results {
+        id
+        name
+        image
+      }
+    }
+  }
+`;
 
 function App() {
+  const { loading, error, data } = useQuery(GET_POKEMONS);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Pokemons</h1>
+      <ul>
+        {data?.pokemons?.results?.map(pokemon => (
+          <li key={pokemon.id}>
+            {pokemon.name}
+            
+          </li>
+          
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default App;
+function ApolloApp() {
+  return (
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
+  );
+}
+
+export default ApolloApp;
