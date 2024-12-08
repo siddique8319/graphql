@@ -9,7 +9,7 @@ const client = new ApolloClient({
 
 const GET_POKEMONS = gql`
   query getPokemons {
-    pokemons(limit: 10, offset: 0) {
+    pokemons(limit: 40, offset: 0) {
       results {
         id
         name
